@@ -2,26 +2,22 @@
 version: "3.6"
 services:
   ojs:
-    privileged: true
     build:
-      context: .
+      context: https://github.com/arturluizbr/docker-pkp-ojs.git
+      args:
+        - tag_name=ojs-3_1_2-3
+    volumes:
+      - ./ojs_files:/var/files
+      - ./ojs_public_files:/var/www/html/public
     ports: 
       - 8181:80
+    env_file: .env
     environment: 
-      - PKP_DATABASE_DRIVER=mysqli
-      - PKP_DATABASE_HOST=mysql
-      - PKP_DATABASE_USERNAME=ojs
-      - PKP_DATABASE_PASSWORD=ojs
-      - PKP_DATABASE_NAME=ojs
-      - MOUNT_POINT=/var/s3
-      - PKP_FILES_FILES_DIR=${MOUNT_POINT}/ojs/files
-      - PKP_FILES_PUBLIC_FILES_DIR=${MOUNT_POINT}/ojs/public
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - S3_BUCKET=${S3_BUCKET}
-
+      - PKP_GENERAL_INSTALLED="On"
   mysql:
     image: mysql:5.7
+    ports: 
+      - 3307:3306
     volumes:
       - db_data:/var/lib/mysql
     environment: 
@@ -32,3 +28,6 @@ services:
 
 volumes: 
   db_data:
+  ojs_files:
+  ojs_public_files:
+
